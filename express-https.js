@@ -1,3 +1,4 @@
+const listenPort = 5100;
 const privateKeyPath = '/etc/letsencrypt/live/node.pymnts.com/privkey.pem';
 const fullchainPath = '/etc/letsencrypt/live/node.pymnts.com/fullchain.pem';
 
@@ -20,6 +21,8 @@ const httpsServer = https.createServer({
   }, app);
   
 
-  httpsServer.listen(5100, () => {
-    console.log('HTTPS Server running on port 5100');
+  httpsServer.listen(listenPort, () => {
+    console.log(`HTTPS Server running on port ${listenPort}`);
 });
+
+
