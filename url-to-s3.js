@@ -4,6 +4,11 @@ const fse = require('fs-extra');
 const fsp = require('fs').promises;
 const mime = require('mime-types');
 const axios = require('axios');
+require('dotenv').config();
+const { v4: uuidv4 } = require('uuid');
+
+
+
 
 const {S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET} = process.env;
 
@@ -16,11 +21,11 @@ const s3Client = new S3({
     }
 });
 
-const upload = async (localFolder, bucketFolder, data = '') => {
-    if (!data) data = await fsp.readFile(localFolder+fileName);
+const upload = async (localFolder, localFileName, bucketFolder, bucketFileName) => {
+    const data = await fsp.readFile(localFolder+localFileName);
     let contentType = '';
 
-    contentType = mime.lookup(fileName);
+    contentType = mime.lookup(localFileName);
 
     if (!contentType) {
         console.error(`upload: Could not determine mime type for: ${fileName}`);
@@ -29,7 +34,7 @@ const upload = async (localFolder, bucketFolder, data = '') => {
 
     const bucketParams = {
         Bucket: process.env.S3_BUCKET,
-        Key: `${bucketFolder}/${fileName}`,
+        Key: `${bucketFolder}/${bucketFileName}`,
         Body: data,
         ACL: 'public-read',
         'Content-Type': contentType
@@ -69,3 +74,9 @@ const downloadAxiosFile = async (url, filePath) => {
     })
   }
 
+exports.urlToS3 = async (url, bucketFolder, bucketFileName) => {
+    const loc = url.lastIndexOf('/');
+    const fileName = uuidv4() . url.substring(loc+1);
+    await downloadAxiosFile (url, `/home/tmp/${fileName}`);
+    return await upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+}
