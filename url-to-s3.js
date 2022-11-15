@@ -6,7 +6,7 @@ const mime = require('mime-types');
 const axios = require('axios');
 require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
-
+const { getVideoDurationInSeconds } = require('get-video-duration');
 
 
 
@@ -79,4 +79,16 @@ exports.urlToS3 = async (url, bucketFolder, bucketFileName) => {
     const fileName = uuidv4() . url.substring(loc+1);
     await downloadAxiosFile (url, `/home/tmp/${fileName}`);
     return await upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+}
+
+exports.videoUrlToS3 = async (url, bucketFolder, bucketFileName) => {
+    const loc = url.lastIndexOf('/');
+    const fileName = uuidv4() . url.substring(loc+1);
+    await downloadAxiosFile (url, `/home/tmp/${fileName}`);
+    const duration = getVideoDurationInSeconds(`/home/tmp/${fileName}`);
+    const link = upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+    return {
+        link,
+        duration
+    }
 }
