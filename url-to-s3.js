@@ -76,17 +76,24 @@ const downloadAxiosFile = async (url, filePath) => {
 
 exports.urlToS3 = async (url, bucketFolder, bucketFileName) => {
     const loc = url.lastIndexOf('/');
-    const fileName = uuidv4() . url.substring(loc+1);
+    const fileName = `${uuidv4()}_${url.substring(loc+1)}`;
     await downloadAxiosFile (url, `/home/tmp/${fileName}`);
-    return await upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+    const link = await upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+    fs.unlink(`/home/tmp/${fileName}`);
+    return link;
 }
 
 exports.videoUrlToS3 = async (url, bucketFolder, bucketFileName) => {
-    const loc = url.lastIndexOf('/');
-    const fileName = uuidv4() . url.substring(loc+1);
+    let loc = url.lastIndexOf('/');
+    ++loc;
+    const fileName = `${uuidv4()}_${url.substring(loc)}`;
+    
     await downloadAxiosFile (url, `/home/tmp/${fileName}`);
-    const duration = getVideoDurationInSeconds(`/home/tmp/${fileName}`);
-    const link = upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+    const duration = await getVideoDurationInSeconds(`/home/tmp/${fileName}`);
+    const link = await upload('/home/tmp/', fileName, bucketFolder, bucketFileName);
+    fs.unlink(`/home/tmp/${fileName}`, (err => {
+        if (err) console.log(err);
+      }));
     return {
         link,
         duration
