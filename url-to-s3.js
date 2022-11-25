@@ -27,10 +27,7 @@ const upload = async (localFolder, localFileName, bucketFolder, bucketFileName) 
 
     contentType = mime.lookup(localFileName);
 
-    if (!contentType) {
-        console.error(`upload: Could not determine mime type for: ${fileName}`);
-        return;
-    }
+    if (!contentType) contentType = 'application/octet-stream';
 
     const bucketParams = {
         Bucket: process.env.S3_BUCKET,
