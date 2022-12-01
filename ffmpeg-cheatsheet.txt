@@ -1,0 +1,12 @@
+ffmpeg -i inputFile outputFile
+
+// codecs
+-c:v videoCodec | copy
+-c:a audioCodec | copy
+
+// bitrate
+-b:v videoBitRate (e.g. 1M)
+
+// framerate
+-r frameRate (e.g. 24 for 24 frames per second)
+
