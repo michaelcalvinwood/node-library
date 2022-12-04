@@ -1,3 +1,10 @@
+https://www.google.com/search?q=move+picture+over+video+ffmpeg&biw=2074&bih=1022&sxsrf=ALiCzsa1lY2s-gA9ln9PSVnIlVOi2ejWTg%3A1669930003102&ei=ExyJY_fdBcfLytMPkIK7qA8&ved=0ahUKEwi3s4mFrtn7AhXHpXIEHRDBDvU4FBDh1QMIEQ&uact=5&oq=move+picture+over+video+ffmpeg&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIICCEQwwQQoAE6CggAEEcQ1gQQsAM6BQgAEKIESgQIQRgASgQIRhgAUP8LWOk5YMVAaANwAXgAgAH3AYgBiAiSAQUwLjQuMpgBAKABAcgBCMABAQ&sclient=gws-wiz-serp
+
+https://www.youtube.com/watch?v=hElDsyuAQDA
+https://dev.to/dak425/add-an-animation-overlay-on-a-video-with-ffmpeg-25na
+https://video.stackexchange.com/questions/12105/add-an-image-overlay-in-front-of-video-using-ffmpeg
+https://video.stackexchange.com/questions/23179/ffmpeg-overlay-image-moving-is-choppy
+
 ffmpeg -i inputFile outputFile
 
 // codecs
@@ -10,3 +17,33 @@ ffmpeg -i inputFile outputFile
 // framerate
 -r frameRate (e.g. 24 for 24 frames per second)
 
+// resolution
+-s widthxheight (e.g. 848x480)
+
+// getting video segment
+-ss hh:mm:ss (start point) -t timeInSeconds (duration)
+
+// extracting audioCodec
+-vn (no video) outputFile.mp3 (or any other audio extension)
+
+// swapping the audio in video #0 with the audio from video #1
+ffmpeg -i video01.mp4 -i video02.mp4 -map 0:v:0 -map 1:a:0 output.mp4
+    // -map {input}:{a/v}:{outputFileSlot} 0:v:0 input0's video is slot 0 of outputFile
+
+// changing the volume
+-filter:a "volume=.5" // cuts volume in half
+
+// cropping a video
+-filter:v "crop=width:height:start:start:Y" (e.g. 1280:720:0:0)
+
+// overlay an image
+ffmpeg -i video.mp4 -i image.png -filter_complex "overlay=50:50" // overlay start 50px from top and 50 px from the side
+
+// chroma key 
+ffmpeg -i video.mp4 
+    -c:v vp9 // the vp9 codec allows transparency
+    -filter:v "chromakey=0x00ff00:0.1:.02" // color:tolerance:blend
+    output.mp4
+
+// split video into frames
+ffmpeg -i video.mp4 frame-%05d.png -hide_banner
