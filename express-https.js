@@ -1,6 +1,7 @@
 const listenPort = 5100;
-const privateKeyPath = '/etc/letsencrypt/live/node.pymnts.com/privkey.pem';
-const fullchainPath = '/etc/letsencrypt/live/node.pymnts.com/fullchain.pem';
+const hostname = 'authentication.treepadcloud.com'
+const privateKeyPath = `/etc/letsencrypt/live/${hostname}/privkey.pem`;
+const fullchainPath = `/etc/letsencrypt/live/${hostname}/fullchain.pem`;
 
 const express = require('express');
 const https = require('https');
