@@ -1,5 +1,5 @@
 const mysqlDb = require('mysql');
-const require('dotenv').config();
+require('dotenv').config();
 
 const pool = mysqlDb.createPool({
   connectionLimit: 4,
@@ -20,7 +20,7 @@ pool.getConnection((err,connection) => {
   this.sqlReady = true;
 });
 
-exports.sqlQuery = query => {
+exports.query = query => {
   return new Promise((resolve, reject) => {
     pool.query(query, (err, data) => {
       if(err) {

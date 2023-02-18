@@ -1,4 +1,4 @@
-const listenPort = 5100;
+const listenPort = 6200;
 const hostname = 'authentication.treepadcloud.com'
 const privateKeyPath = `/etc/letsencrypt/live/${hostname}/privkey.pem`;
 const fullchainPath = `/etc/letsencrypt/live/${hostname}/fullchain.pem`;

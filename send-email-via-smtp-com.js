@@ -1,7 +1,9 @@
-const sendEmail = (recipientEmailAddress, senderEmailAddress, subject, html, apiKey, channel, fromName = '') => {
+require('dotenv').config();
+
+const sendEmaiViaSMTPcom = (recipientEmailAddress, senderEmailAddress, subject, html, channel, fromName = '') => {
    return new Promise((resolve, reject) => {
        let request = {
-           url: `https://api.smtp.com/v4/messages?api_key=${apiKey}`,
+           url: `https://api.smtp.com/v4/messages?api_key=${process.env.SMTP_COM_API_KEY}`,
            method: 'post',
            data: {
                "channel": channel,
