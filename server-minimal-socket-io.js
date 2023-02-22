@@ -8,13 +8,19 @@ const io = socketio(server);
 
 app.use(express.static('static'));
 
-io.on('connection', (socket) => {
-  console.log(`${socket.id} has connected`);
-  
-  socket.on('disconnect', () => {
-    console.log(`${socket.id} has disconnected`)
-  });
-});
+const sendMsgToUser = (socket, msg, data) => socket.emit(msg, data);
+
+const handleSocket = async socket => {
+    socket.on('disconnect', () => {
+        console.log(`${socket.id} has disconnected`)
+    });
+
+    sendMsgToUser (socket, 'welcome', { message: 'Hello!', id: socket.id });
+
+    console.log(`${socket.id} has connected`);
+}
+
+io.on('connection', (socket) => handleSocket);
 
 /* io methods
 
