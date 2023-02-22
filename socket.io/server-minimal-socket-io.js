@@ -8,7 +8,13 @@ const io = socketio(server);
 
 app.use(express.static('static'));
 
-const sendMsgToUser = (socket, msg, data) => socket.emit(msg, data);
+const sendMsgToUser = (socket, msg, data) => socket.to(socket.id).emit(msg, data);
+
+const getUserRooms = (socket) => socket.rooms;
+
+const joinRoom = (socket, roomId) => socket.join(roomId);
+
+
 
 const handleSocket = async socket => {
     socket.on('disconnect', () => {
