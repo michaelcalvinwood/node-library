@@ -1,3 +1,4 @@
 .env
 backup/
 fluent-ffmpeg/videos/
+etherpad-reverse-proxy/node_modules/
