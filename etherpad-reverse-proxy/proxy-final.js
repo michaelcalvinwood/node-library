@@ -18,5 +18,5 @@ https.createServer(keys, (req, res) => {
 	console.log(req.url);
 	//if (req.url.startsWith('/p')) return;
 	proxy.web(req, res, { 
-		target: 'https://127.0.0.1:9001'});	
+		target: 'http://127.0.0.1:9001'});	
 }).listen(443, '0.0.0.0');
