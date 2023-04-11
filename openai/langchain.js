@@ -1,5 +1,7 @@
 const { OpenAI} = require ("langchain/llms/openai");
 const { Configuration, OpenAIApi } = require("openai");
+const p = require ("promptable");
+
 require("dotenv").config;
 
 
@@ -30,5 +32,19 @@ const run = async () => {
     console.log({ res });
 };
 
-embedding ('hello')
+function splitWords(string, chunk = 400, overlap = 200) { 
+    const newArray = string.split(" "); 
+    let count = 0;
+    const text = [];
+    while (count < newArray.length) {
+        let temp = [];
+        for (let i = count; i < count + chunk && i < newArray.length; ++i) temp.push(newArray[i]);
+        text.push(temp.join(" "));
+        count += chunk - overlap;
+    }
+    console.log('text', text);
+ }; 
 
+//embedding ('hello')
+
+splitWords('Hello, how are you doing my friend? We have so many things to talk about!');
