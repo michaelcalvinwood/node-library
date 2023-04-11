@@ -7,7 +7,7 @@ async function generateImage () {
     });
     const openai = new OpenAIApi(configuration);
     const response = await openai.createImage({
-      prompt: "A cute baby sea otter eating pizza",
+      prompt: "Amazon destroying Walmart",
       n: 1,
       size: "1024x1024",
     });
