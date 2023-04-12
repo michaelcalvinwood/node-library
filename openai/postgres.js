@@ -1,5 +1,6 @@
 require('dotenv').config();
-const { Pool } = require('node-postgres');
+const { Client } = require('pg');
+const pgvector = require('pgvector/pg');
 
 const config = {
   user: process.env.POSTGRES_USER,
@@ -8,11 +9,11 @@ const config = {
   password: process.env.POSTGRES_PASSWORD,
   port: 5432
 };
-const pool = new Pool(config);
+const pgClient = new Client(config);
 
 let connectedFlag = false;
 
-let pgClient;
+
 
 const run = async () => {
   if (!connectedFlag) return;
@@ -26,10 +27,11 @@ const run = async () => {
 
 // connect to postgres database
 (async () => {
-  pgClient = await pool.connect();
+  await pgClient.connect();
   try {
     // const res = await pgClient.query('SELECT * from posts');
     // console.log(res);
+    await pgvector.registerType(pgClient);
     connectedFlag = true;
   } catch (error) {
     console.log(error);
