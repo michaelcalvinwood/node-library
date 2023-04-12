@@ -40,9 +40,11 @@ const insertEmbedding = async (string) => {
   return true;
 }
 
-const run = async () => {
-  if (!connectedFlag) return;
-  await insertEmbedding('another string');
+const getNearestNeighbors = async (string) => {
+  const embedding = await getEmbedding (string);
+  const q = `SELECT body FROM posts ORDER BY embedding <-> '${[pgvector.toSql(embedding)]}' LIMIT 5`;
+  const result = await pgClient.query(q);
+  console.log('result', result);
 }
 
 // connect to postgres database
@@ -57,6 +59,12 @@ const connectToPostgres = async () => {
 }
 
 connectToPostgres();
+
+
+const run = async () => {
+  if (!connectedFlag) return;
+  await getNearestNeighbors('hello earth');
+}
 
 // give program 2 seconds to make the postgres connection and then run
 setTimeout(run, 2000);
