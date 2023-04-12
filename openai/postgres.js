@@ -21,7 +21,7 @@ function splitWords(string, chunk = 400, overlap = 200) {
   while (count < newArray.length) {
       let temp = [];
       for (let i = count; i < count + chunk && i < newArray.length; ++i) temp.push(newArray[i]);
-      text.push(temp.join(" ").replaceAll("\n", ''));
+      text.push(temp.join(" ").replaceAll("\n", '').replaceAll("\r", ''));
       count += chunk - overlap;
   }
   return text;
