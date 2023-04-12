@@ -14,6 +14,19 @@ const pgClient = new Client(config);
 
 let connectedFlag = false;
 
+function splitWords(string, chunk = 400, overlap = 200) { 
+  const newArray = string.split(" "); 
+  let count = 0;
+  const text = [];
+  while (count < newArray.length) {
+      let temp = [];
+      for (let i = count; i < count + chunk && i < newArray.length; ++i) temp.push(newArray[i]);
+      text.push(temp.join(" ").replaceAll("\n", ''));
+      count += chunk - overlap;
+  }
+  return text;
+}; 
+
 const getEmbedding = async (input) => {
   const configuration = new Configuration({
       apiKey: process.env.OPENAI_API_KEY,
@@ -59,7 +72,6 @@ const connectToPostgres = async () => {
 }
 
 connectToPostgres();
-
 
 const run = async () => {
   if (!connectedFlag) return;

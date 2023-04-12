@@ -42,7 +42,7 @@ function splitWords(string, chunk = 400, overlap = 200) {
         text.push(temp.join(" "));
         count += chunk - overlap;
     }
-    console.log('text', text);
+    return text;
  }; 
 
 //embedding ('hello')
