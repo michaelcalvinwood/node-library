@@ -28,32 +28,35 @@ const getEmbedding = async (input) => {
     return embedding;
 }
 
-const run = async () => {
-  if (!connectedFlag) return;
+const insertEmbedding = async (string) => {
   try {
-    const string = 'hello world';
     const embedding = await getEmbedding (string);
     const q = `INSERT INTO posts (body, embedding) VALUES ('${string}', '${[pgvector.toSql(embedding)]}')`;
-    console.log('query', q);
-
     await pgClient.query(q);   
   } catch (error) {
     console.log(error);
+    return false;
   }
+  return true;
+}
+
+const run = async () => {
+  if (!connectedFlag) return;
+  await insertEmbedding('another string');
 }
 
 // connect to postgres database
-(async () => {
+const connectToPostgres = async () => {
   await pgClient.connect();
   try {
-    const res = await pgClient.query('SELECT * from posts');
-    console.log(res);
     await pgvector.registerType(pgClient);
     connectedFlag = true;
   } catch (error) {
     console.log(error);
   } 
-})().catch(console.error);
+}
+
+connectToPostgres();
 
 // give program 2 seconds to make the postgres connection and then run
 setTimeout(run, 2000);
