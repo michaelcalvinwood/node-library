@@ -11,14 +11,19 @@ var path = require('path');
 
 const {S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET} = process.env;
 
-exports.client = (S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET) => new S3({
-    endpoint: S3_ENDPOINT,
-    region: S3_REGION,
-    credentials: {
-        accessKeyId: S3_KEY,
-        secretAccessKey: S3_SECRET
-    }
-});
+exports.client = (S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET) => {
+    const client = new S3({
+        endpoint: S3_ENDPOINT,
+        region: S3_REGION,
+        credentials: {
+            accessKeyId: S3_KEY,
+            secretAccessKey: S3_SECRET
+        }
+    });
+    client.meta = {S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET}
+    return client;
+}
+
 
 exports.uploadFile = async (s3Client, filename, bucketFolder, bucketFileName) => {
     const data = await fsp.readFile(filename);
@@ -47,3 +52,18 @@ exports.uploadFile = async (s3Client, filename, bucketFolder, bucketFileName) =>
         return '';
       }      
 };
+
+exports.fileSize = (s3Client, Key) => {
+    return new Promise((resolve, reject) => {
+        s3Client.headObject({Bucket: s3Client.meta.S3_BUCKET, Key}, (err, data) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+                return;
+            }
+            console.log(data);
+            resolve(data.ContentLength);
+            return;
+        })
+    })
+}
