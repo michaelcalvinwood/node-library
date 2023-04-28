@@ -37,6 +37,32 @@ exports.presignedUploadUrl = async (s3Client, Key, expiresIn = 900) => {
     }
 }
 
+exports.eraseFolder = async (s3Client, folder) => {
+    const Bucket = s3Client.meta.S3_BUCKET;
+    const listParams = {
+        Bucket,
+        Prefix: `${folder}/`
+    };
+
+    const listedObjects = await s3Client.send(new ListObjectsV2Command(listParams));
+
+    if (!listedObjects.Contents) return;
+    if (listedObjects.Contents.length === 0) return;
+
+    const deleteParams = {
+        Bucket,
+        Delete: { Objects: [] }
+    };
+
+    listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+    });
+
+    await s3Client.send(new DeleteObjectsCommand(deleteParams));
+
+    if (listedObjects.IsTruncated) await this.eraseFolder(folder);
+}
+
 exports.client = (S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET) => {
     const client = new S3({
         endpoint: S3_ENDPOINT,
