@@ -10,8 +10,10 @@ const s3Client = s3.client(S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S
 async function doStuff() {
     //await s3.uploadFile(s3Client, './test.txt', 'test', 'testtest.txt');
 
-    const fileSize = await s3.fileSize(s3Client, 'test/testtest.txt');
+    //const fileSize = await s3.fileSize(s3Client, 'test/testtest.txt');
     
+    const url = await s3.presignedUploadUrl(s3Client, 'test/yoyo.pdf');
+
     console.log('fileSize', fileSize);
 }
 

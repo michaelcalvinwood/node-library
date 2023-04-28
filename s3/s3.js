@@ -8,6 +8,7 @@ const mime = require('mime-types');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 var path = require('path');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 const {S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET} = process.env;
 
@@ -17,6 +18,23 @@ exports.contentType = filename => {
     const contentType = mime.lookup(baseFilename);
 
     return contentType ? contentType : 'application/octet-stream';
+}
+
+exports.presignedUploadUrl = async (s3Client, Key, expiresIn = 900) => {
+    const Bucket = s3Client.meta.S3_BUCKET;
+    const ContentType = this.contentType(Key);
+    const bucketParams = {Bucket, Key, ContentType};
+
+    console.log(bucketParams);
+
+    try {
+      const url = await getSignedUrl(s3Client, new PutObjectCommand({Bucket, Key, ContentType}), { expiresIn }); // Adjustable expiration.
+      console.log("URL:", url);
+      return url;
+    } catch (err) {
+      console.log("Error", err);
+      return false;
+    }
 }
 
 exports.client = (S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET) => {
