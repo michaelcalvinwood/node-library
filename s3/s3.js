@@ -11,6 +11,14 @@ var path = require('path');
 
 const {S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET} = process.env;
 
+exports.contentType = filename => {
+    const baseFilename = path.basename(filename);
+
+    const contentType = mime.lookup(baseFilename);
+
+    return contentType ? contentType : 'application/octet-stream';
+}
+
 exports.client = (S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET) => {
     const client = new S3({
         endpoint: S3_ENDPOINT,
