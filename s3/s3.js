@@ -36,7 +36,25 @@ const emptyS3Directory = async (bucket, dir, s3Client) => {
   
     if (listedObjects.IsTruncated) await emptyS3Directory(bucket, dir);
   }
+  const getPostSignedUrl = async (Bucket, folder, s3Client, Expires = 3600) => {
 
+    const params = {
+      Bucket,
+      Expires,
+      Conditions: [
+        ['starts-with', '$key', folder]
+      ]
+    };
+    
+    s3Client.createPresignedPost(params, (err, data) => {
+      if (err) {
+        console.error('Presigning post data encountered an error', err);
+      } else {
+        data.Fields.key = 'path/to/uploads/${filename}';
+        console.log('The post data is', data);
+      }
+    });
+  }
 exports.contentType = filename => {
     const baseFilename = path.basename(filename);
 
