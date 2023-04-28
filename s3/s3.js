@@ -12,6 +12,31 @@ const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 const {S3_ENDPOINT, S3_ENDPOINT_DOMAIN, S3_REGION, S3_KEY, S3_SECRET, S3_BUCKET} = process.env;
 
+
+const emptyS3Directory = async (bucket, dir, s3Client) => {
+    const listParams = {
+        Bucket: bucket,
+        Prefix: dir
+    };
+  
+    const listedObjects = await s3Client.listObjectsV2(listParams).promise();
+  
+    if (listedObjects.Contents.length === 0) return;
+  
+    const deleteParams = {
+        Bucket: bucket,
+        Delete: { Objects: [] }
+    };
+  
+    listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+    });
+  
+    await s3Client.deleteObjects(deleteParams).promise();
+  
+    if (listedObjects.IsTruncated) await emptyS3Directory(bucket, dir);
+  }
+
 exports.contentType = filename => {
     const baseFilename = path.basename(filename);
 
